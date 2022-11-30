@@ -1,26 +1,43 @@
 import { Collection } from "./data/Collection";
 import { ExpenseService } from "./data/ExpenseService";
 import { Expense } from "./data/models";
-import { LocalStorage } from "./data/Storage";
+import { RemoteStorage } from "./data/Remote";
 import { button, span, td, tr } from "./dom/dom";
 import { Editor } from "./dom/Editor";
 import { Table } from "./dom/Table";
 
 
-const storage = new LocalStorage();
+const storage = new RemoteStorage();
 const collection = new Collection(storage, 'expenses');
 const expenseService = new ExpenseService(collection);
 
-start();
+const formContainer = document.getElementById('forms');
 
-async function start() {
-    const table = document.querySelector('table');
-    const tableManager = new Table(table, createExpenseRow, identifyExpense);
 
-    const form = document.getElementById('new-expense') as HTMLFormElement;
-    const editor = new Editor(form, onSubmit.bind(null, tableManager), ['date', 'name', 'category', 'amount']);
+const table = document.querySelector('table');
+const tableManager = new Table(table, createExpenseRow, identifyExpense);
 
-    hidrate(tableManager);
+const newForm = document.getElementById('new-expense') as HTMLFormElement;
+const editForm = document.getElementById('edit-expense') as HTMLFormElement;
+const newExpenseEditor = new Editor(newForm, onSubmit.bind(null, tableManager), ['date', 'name', 'category', 'amount']);
+const editExpenseEditor = new Editor(editForm, onEdit.bind(null, tableManager), ['id', 'date', 'name', 'category', 'amount']);
+editExpenseEditor.remove();
+
+tableManager.element.addEventListener('click', onTableClick);
+
+hidrate(tableManager);
+
+function onTableClick(event: MouseEvent) {
+    if (event.target instanceof HTMLButtonElement) {
+        if (event.target.className == 'edit') {
+            newExpenseEditor.remove();
+            editExpenseEditor.attachTo(formContainer);
+
+            const id = event.target.parentElement.parentElement.dataset.id;
+            const record = tableManager.get(id);
+            editExpenseEditor.setValues(record);
+        }
+    }
 }
 
 async function hidrate(tableManager: Table) {
@@ -35,25 +52,18 @@ function identifyExpense(expenses: Expense[], id: string) {
 }
 
 function createExpenseRow(expense: Expense) {
-    console.log(expense);
     const row = tr({ dataId: expense.id },
         td({}, `${expense.date.getDate()}.${expense.date.getMonth() + 1}`),
         td({}, expense.name),
         td({}, expense.category),
         td({}, span({ className: 'currency' }, expense.amount.toString())),
-        td({}, button({}, 'Edit'), button({}, 'Delete'))
+        td({}, button({ className: 'edit' }, 'Edit'), button({ className: 'delete' }, 'Delete'))
     );
 
     return row;
 }
 
 async function onSubmit(tableManager: Table, { date, name, category, amount }) {
-    const result = tableManager.get('7893-f6b4');
-    console.log(result);
-
-    const row = tableManager.getRow('7893-f6b4');
-    console.log(row);
-    /*
     const parsedDate = new Date(date);
 
     if (Number.isNaN(parsedDate.getDate())) {
@@ -71,5 +81,15 @@ async function onSubmit(tableManager: Table, { date, name, category, amount }) {
     });
 
     tableManager.add(result);
-    */
+}
+
+async function onEdit(tableManager: Table, { id, date, name, category, amount }) {
+    date = new Date(date);
+    amount = Number(amount);
+
+    const result = await expenseService.update(id, { date, name, category, amount });
+    tableManager.replace(id, result);
+
+    editExpenseEditor.remove();
+    newExpenseEditor.attachTo(formContainer);
 }

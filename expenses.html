@@ -22,29 +22,58 @@
 
             <h2>Expenses</h2>
 
-            <form id="new-expense" class="clear">
-                <fieldset class="aligned">
-                    <label class="row-label"><input type="date" name="date"><span>Date</span></label>
-                    <label class="row-label"><input type="text" name="name"><span>Name</span></label>
-                    <label class="row-label">
-                        <select name="category">
-                            <option value="0">Other</option>
-                            <option value="1">Utilities</option>
-                            <option value="2">Groceries</option>
-                            <option value="3">Entertainment</option>
-                            <option value="4">Transport</option>
-                        </select>
-                        <span>Category</span>
-                    </label>
-                    <label class="row-label"><input type="number" name="amount" step="0.01"><span>Amount</span></label>
+            <div id="forms">
+                <form id="new-expense" class="clear">
+                    <fieldset class="aligned">
+                        <label class="row-label"><input type="date" name="date"><span>Date</span></label>
+                        <label class="row-label"><input type="text" name="name"><span>Name</span></label>
+                        <label class="row-label">
+                            <select name="category">
+                                <option value="0">Other</option>
+                                <option value="1">Utilities</option>
+                                <option value="2">Groceries</option>
+                                <option value="3">Entertainment</option>
+                                <option value="4">Transport</option>
+                            </select>
+                            <span>Category</span>
+                        </label>
+                        <label class="row-label"><input type="number" name="amount"
+                                step="0.01"><span>Amount</span></label>
 
-                    <div class="centered">
-                        <button class="action">Save</button>
-                        <button class="action">Cancel</button>
-                    </div>
+                        <div class="centered">
+                            <button class="action">Create</button>
+                            <button class="action cancel">Cancel</button>
+                        </div>
 
-                </fieldset>
-            </form>
+                    </fieldset>
+                </form>
+
+                <form id="edit-expense" class="clear">
+                    <input type="hidden" name="id">
+                    <fieldset class="aligned">
+                        <label class="row-label"><input type="date" name="date"><span>Date</span></label>
+                        <label class="row-label"><input type="text" name="name"><span>Name</span></label>
+                        <label class="row-label">
+                            <select name="category">
+                                <option value="0">Other</option>
+                                <option value="1">Utilities</option>
+                                <option value="2">Groceries</option>
+                                <option value="3">Entertainment</option>
+                                <option value="4">Transport</option>
+                            </select>
+                            <span>Category</span>
+                        </label>
+                        <label class="row-label"><input type="number" name="amount"
+                                step="0.01"><span>Amount</span></label>
+
+                        <div class="centered">
+                            <button class="action">Save</button>
+                            <button class="action cancel">Cancel</button>
+                        </div>
+
+                    </fieldset>
+                </form>
+            </div>
 
             <table class="editor">
                 <thead>

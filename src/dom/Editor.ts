@@ -8,7 +8,11 @@ export class Editor {
     }
 
     setValue(name: string, value: any) {
-        const target = this.form.querySelector(`[name="${name}"]`)
+        const target = this.form.querySelector(`[name="${name}"]`);
+        if (value instanceof Date) {
+            value = value.toISOString().slice(0, 10);
+        }
+
         if (target instanceof HTMLInputElement) {
             if (target.type == 'checkbox') {
                 target.checked = value;
